@@ -67,6 +67,11 @@ void nvml_poll_accum(int sleep_ms, int gpu_index) {
     nvmlDevice_t device;
     checkNVML(nvmlInit_v2());
     checkNVML(nvmlDeviceGetHandleByIndex_v2(gpu_index, &device));
+    char name[256];
+    unsigned int device_count;
+    checkNVML(nvmlDeviceGetCount_v2(&device_count));
+    checkNVML(nvmlDeviceGetName(device, name, 255));
+    printf("[pedl.monitor] Device to be monitored: %s (idx: %d, total: %u)\n", name, gpu_index, device_count);
 
     printf("[Polling thread] Start running\n");
     nvml_thread_running = true;
@@ -74,9 +79,9 @@ void nvml_poll_accum(int sleep_ms, int gpu_index) {
     auto sleep_to = std::chrono::steady_clock::now();
     std::chrono::milliseconds ms{sleep_ms};
     while (!nvml_thread_stopped) {
-        sleep_to += ms;
-        nvmlPollPowerAndAccumulate(device, sleep_ms);
-        std::this_thread::sleep_until(sleep_to);
+	    sleep_to += ms;
+	    nvmlPollPowerAndAccumulate(device, sleep_ms);
+	    std::this_thread::sleep_until(sleep_to);
     }
 
     // Shutdown NVML.
@@ -88,18 +93,18 @@ void nvml_poll_accum(int sleep_ms, int gpu_index) {
 
 
 void start_nvml_thread(int sleep_ms, int gpu_index) {
-    if (!nvml_thread_stopped) { return; }
-    nvml_thread_stopped = false;
-    nvml_thread = std::thread(nvml_poll_accum, sleep_ms, gpu_index);
-    while (!nvml_thread_running) {}
-    printf("[Main thread] Polling thread started\n");
+	if (!nvml_thread_stopped) { return; }
+	nvml_thread_stopped = false;
+	nvml_thread = std::thread(nvml_poll_accum, sleep_ms, gpu_index);
+	while (!nvml_thread_running) {}
+	printf("[Main thread] Polling thread started\n");
 }
 
 void stop_nvml_thread() {
-    if (nvml_thread_stopped) { return; }
-    nvml_thread_stopped = true;
-    nvml_thread.join();
-    printf("[Main thread] Polling thread stopped\n");
+	if (nvml_thread_stopped) { return; }
+	nvml_thread_stopped = true;
+	nvml_thread.join();
+	printf("[Main thread] Polling thread stopped\n");
 }
 
 uint64_t read_energy() { return energy_accum; }

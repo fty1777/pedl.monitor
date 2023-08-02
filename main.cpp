@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 
     const char *home_dir = getenv("HOME");
     const char *socket_name = "monitor_server.socket";
-    std::string _socket_path = home_dir + std::string("/") + socket_name;
+    std::string _socket_path = home_dir + std::string("/") + socket_name + std::string(".") + std::to_string(gpu_index);
     const char *socket_path = _socket_path.c_str();
 
     if ((listenfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
