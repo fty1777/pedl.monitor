@@ -35,7 +35,7 @@
 
 // Add prefix for logging
 std::string prefix() {
-    return date::format("%F %T [ZeusMonitor] ",
+    return date::format("%F %T [PedlMonitor] ",
                         floor<std::chrono::milliseconds>(std::chrono::system_clock::now()));
 }
 
@@ -72,7 +72,10 @@ int main(int argc, char **argv) {
     socklen_t client_un_len;
     int listenfd, connfd, size;
 
-    const char *socket_path = "/home/fty/monitor_server.socket";
+    const char *home_dir = getenv("HOME");
+    const char *socket_name = "monitor_server.socket";
+    std::string _socket_path = home_dir + std::string("/") + socket_name;
+    const char *socket_path = _socket_path.c_str();
 
     if ((listenfd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
         perror("socket error");

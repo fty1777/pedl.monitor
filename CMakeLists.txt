@@ -18,7 +18,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 # Define the Project Name and Description
-project(zeus LANGUAGES CXX DESCRIPTION "Zeus: An Energy Optimization Framework for DNN Training")
+project(pedl LANGUAGES CXX DESCRIPTION "Power-efficient Deep Learning")
 
 # Set required C++ Standard
 set(CMAKE_CXX_STANDARD 17)
@@ -56,15 +56,15 @@ feature_summary(INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES WHAT A
 #---------------------------------------------------------------------------------------
 # Define Targets
 #---------------------------------------------------------------------------------------
-add_executable(zeus_monitor
+add_executable(pedl_monitor
   main.cpp
 )
-target_link_libraries(zeus_monitor
+target_link_libraries(pedl_monitor
   nvidia-ml
   Threads::Threads
 )
-target_include_directories(zeus_monitor PRIVATE
+target_include_directories(pedl_monitor PRIVATE
   zemo
   ${CUDAToolkit_INCLUDE_DIRS}
 )
-install(TARGETS zeus_monitor DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(TARGETS pedl_monitor DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
